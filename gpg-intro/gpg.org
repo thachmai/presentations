@@ -1,0 +1,56 @@
+* GPG (GNU Privacy Guard) Intro
+  GPG is a flexible and ambitious tool that handles many encryption purposes:
+  - Encryption
+  - Identity management
+  - Content signing/verification
+  
+  Even though GPG (IMO) has many practical usages, it's not widely used according my observations.
+
+* Encryption for everyone (symmetric)
+  A passphrase to encrypt/decrypt a file
+  ~gpg --armor -c diary.txt~ => encrypt "diary.txt" into "diary.txt.gpg"
+
+  Note: ~--armor~ makes it much easier to manipulate key, try without this flag
+** Why use this instead of built-in encryptions?
+   - Work for every file
+   - gpg implementation is likely safer than most
+   - gpg is readily available
+   - Easy to remember
+
+* Identity management 
+** Identity is presented as a "key"
+   - A key has a name, email, public key and (optionally) private key
+   - Secret key: a key for which you have the private key => full control
+   - You pass the public key around, keep the private key for yourself
+
+** Create a new key
+   ~gpg --full-gen-ken~ => interactive wizard to generate a new key
+   ~gpg --list-keys~ => show all the keys gpg knows
+   ~gpg --list-secret-keys~ => show all the keys that you control
+
+   Note: key generation can be problematic inside a VM since there might not be enough native entrophy.
+
+** Exporting and importing keys
+   ~gpg --armor --export key-id > key-file.gpg~ => export key with key-id to key-file.gpg
+   ~gpg --import key-file.gpg~ => import a key into your trustdb
+
+** Editting key trust level
+   ~gpg --edit-key key-id~ => present a edit-key cli so you can trust the key (among many other things...)
+
+* Encryption for a specific target
+  ~gpg --armor --encrypt -r contact@thachmai.info diary.txt~ => encrypt the file "diary.txt" so that only
+  "contact@thachmai.info" can decrypt it
+
+* Signing file
+  ~gpg --armor --detach-sign diary.txt~ => produce a signature stored in "diary.txt.asc" that can be used to prove that you wrote "diary.txt"
+
+  ~gpg --verify diary.txt.asc diary.txt~
+
+* To sum it off
+  - gpg is powerful and versatile, it's the underlying cryptographic tools for many things in Linux
+  - gpg is not what I'd call "user friendly"
+  - To understand how it all connects together, you'll need to understand symmetric/asymmetric encryptions
+
+* Notes
+  To forge gpg-agent to forget ~echo RELOADAGENT | gpg-connect-agent~
+  In fedora docker, to use gpg gen-key, need to install ~pinentry~ first
